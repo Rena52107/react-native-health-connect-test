@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.rena07521.react-native-health-connect-test"
@@ -29,7 +27,15 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "react-native-health"
+      [
+        "react-native-health",
+        {
+          "isClinicalDataEnabled": true,
+          "healthSharePermission": "Custom health share permission",
+          "healthUpdatePermission": "Custom health update permission",
+          "healthClinicalDescription": "Custom health share permission for clinical data"
+        }
+      ]
     ],
     "extra": {
       "eas": {
