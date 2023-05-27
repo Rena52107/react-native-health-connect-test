@@ -26,17 +26,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      [
-        "react-native-health",
-        {
-          "isClinicalDataEnabled": true,
-          "healthSharePermission": "Custom health share permission",
-          "healthUpdatePermission": "Custom health update permission",
-          "healthClinicalDescription": "Custom health share permission for clinical data"
-        }
-      ]
-    ],
+    "plugins": ["react-native-health"],
     "extra": {
       "eas": {
         "projectId": "fed7632a-6264-4336-9609-6cd8d56a1042"
