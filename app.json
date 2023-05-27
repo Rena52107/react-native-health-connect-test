@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.rena07521.react-native-health-connect-test"
     },
     "android": {
       "adaptiveIcon": {
