@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -20,38 +20,49 @@ const permissions = {
   },
 };
 
-AppleHealthKit.initHealthKit(permissions, (error) => {
-  /* Called after we receive a response from the system */
-
-  if (error) {
-    console.log('[ERROR] Cannot grant permissions!');
+const stepCountReducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_STEP_COUNT':
+      return action.payload;
+    default:
+      return state;
   }
-
-  /* Can now read or write to HealthKit */
-
-  let options = {
-    startDate: new Date(2016, 1, 1).toISOString(), // required
-    endDate: new Date().toISOString(), // optional; default now
-  };
-
-  AppleHealthKit.getDailyStepCountSamples(options, (err, results) => {
-    if (err) {
-      return;
-    }
-    console.log('getDailyStepCountSamples result: ', results);
-  });
-});
+};
 
 export default function App() {
   const [authStatus, setAuthStatus] = useState({});
+  const [stepCount, dispatch] = useReducer(stepCountReducer, 0);
 
   useEffect(() => {
-    new NativeEventEmitter(NativeModules.AppleHealthKit).addListener(
-      'healthKit:StepCount:new',
-      async () => {
-        console.log('--> observer triggered');
+    AppleHealthKit.initHealthKit(permissions, (error) => {
+      if (error) {
+        console.log('[ERROR] Cannot grant permissions!');
       }
-    );
+
+      let options = {
+        startDate: new Date(2016, 1, 1).toISOString(),
+        endDate: new Date().toISOString(),
+      };
+
+      AppleHealthKit.getDailyStepCountSamples(options, (err, results) => {
+        if (err) {
+          return;
+        }
+        console.log('getDailyStepCountSamples result: ', results);
+
+        const totalSteps = results.reduce((total, sample) => total + sample.value, 0);
+        dispatch({ type: 'SET_STEP_COUNT', payload: totalSteps });
+      });
+    });
+
+    const eventEmitter = new NativeEventEmitter(NativeModules.AppleHealthKit);
+    eventEmitter.addListener('healthKit:StepCount:new', () => {
+      console.log('--> observer triggered');
+    });
+
+    return () => {
+      eventEmitter.removeAllListeners('healthKit:StepCount:new');
+    };
   }, []);
 
   const handlePressGetAuthStatus = () => {
@@ -81,6 +92,9 @@ export default function App() {
               </Text>
               <Text style={styles.sectionDescription}>
                 {JSON.stringify(authStatus, null, 2)}
+              </Text>
+              <Text style={styles.sectionDescription}>
+                Step Count: {stepCount}
               </Text>
             </View>
           </View>
