@@ -15,6 +15,9 @@
       "eas": {
         "projectId": "fed7632a-6264-4336-9609-6cd8d56a1042"
       }
+    },
+    "ios": {
+      "bundleIdentifier": "com.rena07521.react-native-health-connect-test"
     }
   }
 }
